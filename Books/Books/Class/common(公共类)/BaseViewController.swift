@@ -14,15 +14,33 @@
 import UIKit
 
 class BaseViewController: UIViewController {
+    
+    //导航上面添加按钮
+    func adNavCntrBtn(imageName:String,target:AnyObject,action:Selector,isLeft:Bool){
+        let btn = UIButton.createBtn(nil, bgImageName: imageName, highlightImageName: nil, selectImageName: nil, target: target, action: action)
+        btn.frame = CGRectMake(0, 0, 28, 42)
+        let barBtn = UIBarButtonItem(customView: btn)
+        if isLeft {
+            //左边按钮
+            navigationItem.leftBarButtonItem = barBtn
+        }else{
+            //右边按钮
+            navigationItem.rightBarButtonItem = barBtn
+        }
+    }
+    
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //设置背景颜色
+
         view.backgroundColor=UIColor.whiteColor()
 
-        // Do any additional setup after loading the view.
     }
+   
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

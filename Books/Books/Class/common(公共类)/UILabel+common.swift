@@ -9,7 +9,7 @@
 import UIKit
 
 extension UILabel {
-    class func createLabel(text:String?,textAlignment:NSTextAlignment?,font:UIFont?)->UILabel {
+    class func createLabel(text:String?,textAlignment:NSTextAlignment?,font:CGFloat?,textColor:UIColor?)->UILabel {
         let label = UILabel()
         if let tmpText = text {
             label.text = tmpText
@@ -19,7 +19,11 @@ extension UILabel {
         }
         if let tmpFont = font {
             //系统的是17
-            label.font = tmpFont
+            label.font = UIFont.systemFontOfSize(tmpFont)
+        }
+        if let tmpColor = textColor {
+            //系统的是17
+            label.textColor = tmpColor
         }
         return label
     }

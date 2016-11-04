@@ -15,10 +15,15 @@ import Kingfisher
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        let vc = UserViewController()
+        //修改导航的背景图片//可以设置的话，就是在所有的地方都这个效果
+        (UINavigationBar.appearance()).setBackgroundImage(UIImage(named: "nav"), forBarMetrics: .Default)
+        let nav = UINavigationController(rootViewController: vc)
+        window?.rootViewController = nav
         return true
     }
 
