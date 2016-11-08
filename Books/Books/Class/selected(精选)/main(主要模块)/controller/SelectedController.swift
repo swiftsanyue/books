@@ -23,7 +23,7 @@ class SelectedController: BaseViewController {
     
     
     
-    var lock:NSLock=NSLock()
+//    var lock:NSLock=NSLock()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +45,7 @@ class SelectedController: BaseViewController {
                 if response.result.error == nil{
                     let dics=response.result.value as! [String:AnyObject]
                     for (key,value) in dics {
+                        //将解析数据添加进字典
                         self.dict.updateValue(value, forKey: key)  
                     }
                     sum += 1
@@ -80,22 +81,16 @@ class SelectedController: BaseViewController {
                         //更多书籍视图
                         let vc = MoreBookViewController()
                         if jump as? String == "精品书单"{
-                            vc.url = urls[0]
                             vc.urlJson = currentUrls[0]
                         }else if jump as? String == "热门书籍" {
-                            vc.url = urls[1]
                             vc.urlJson = currentUrls[1]
                         }else if jump as? String == "最新完结" {
-                            vc.url = urls[2]
                             vc.urlJson = currentUrls[2]
                         }else if jump as? String == "男生爱读" {
-                            vc.url = urls[3]
                             vc.urlJson = currentUrls[3]
                         }else if jump as? String == "女生爱读" {
-                            vc.url = urls[4]
                             vc.urlJson = currentUrls[4]
                         }else if jump as? String == "同人专区" {
-                            vc.url = urls[5]
                             vc.urlJson = currentUrls[5]
                         }
                         self.navigationController?.pushViewController(vc, animated: true)

@@ -21,10 +21,9 @@ let KScreenH = UIScreen.mainScreen().bounds.size.height
 //
 var currentUrls = ["lhw_jx_0","lhw_jx_1","lhw_jx_2","lhw_jx_3","lhw_jx_4","lhw_jx_5"]
 var currentUrl="lhw_jx_0"
-var currentPage = "220"
-//精选的时候所获得的网址
-var curPage = ["220","221","222","223","224","225","226","227"]
-
+var currentPage = "2200"
+//精选的时候所获得的接口
+//var curPage = ["220","221","222","223","224","225","226","227"]
 
 let SelectedUrl0 = "http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_jx_0%22%2C%22page%22%3A%\(currentPage)%22%7D"
 let SelectedUrl1 = "http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_jx_1%22%2C%22page%22%3A%\(currentPage)%22%7D"
@@ -33,8 +32,17 @@ let SelectedUrl3 = "http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3
 let SelectedUrl4 = "http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_jx_4%22%2C%22page%22%3A%\(currentPage)%22%7D"
 let SelectedUrl5 = "http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_jx_5%22%2C%22page%22%3A%\(currentPage)%22%7D"
 let urls=[SelectedUrl0,SelectedUrl1,SelectedUrl2,SelectedUrl3,SelectedUrl4,SelectedUrl5]
-/*
- http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_jx_5%22%2C%22page%22%3A%220%22%7D
- */
+
+//分类的接口
+let classYQUrl1="http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_yq_1%22%2C%22page%22%3A%220%22%7D"
+let classYQUrl2="http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_yq_2%22%2C%22page%22%3A%220%22%7D"
+let classYQUrl3="http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_yq_3%22%2C%22page%22%3A%220%22%7D"
+let classYQUrl4="http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_yq_4%22%2C%22page%22%3A%220%22%7D"
+let classYQUrl5="http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_yq_5%22%2C%22page%22%3A%220%22%7D"
+
+//这个是全部里面的数据
+let classYQUrl0="http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_yq%22%2C%22page%22%3A%220%22%7D"
+
+
 
 

@@ -11,14 +11,17 @@ import Alamofire
 
 class MoreBookViewController: BaseViewController {
     
-    //闭包
+    //精选闭包
     var jumpClosure:SelectedJumpClosure?
     
-    var url:String?
+    //分类闭包
+    var classjump:ClassJumpClosure?
+    
+    
     
     var urlJson:String?
     
-    var pageNuber = 220
+    var pageNuber = 2200
     
     var dataArray:[bookModel]=[]
     
@@ -28,22 +31,25 @@ class MoreBookViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         MoreView = MoreBookView()
-        
+        var url:String="http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22\(urlJson!)%22%2C%22page%22%3A%\(pageNuber)%22%7D"
         //创建导航
         createNav()
         
         //下载数据
-        downloadData()
+        downloadData(url)
         
         MoreView!.addRefresh((MoreView?.tbView)!,header: { [unowned self] in
-            self.url = self.url?.stringByReplacingOccurrencesOfString(String(self.pageNuber), withString: "220")
-            self.pageNuber = 220
-            self.downloadData()
+            
+            url = url.stringByReplacingOccurrencesOfString(String(self.pageNuber), withString: "2200")
+            self.pageNuber = 2200
+            self.downloadData(url)
+            
         }) { [unowned self] in
             
-            self.url = self.url?.stringByReplacingOccurrencesOfString(String(self.pageNuber), withString: String(self.pageNuber+1))
+            url = url.stringByReplacingOccurrencesOfString(String(self.pageNuber), withString: String(self.pageNuber+1))
+            print(url)
             self.pageNuber+=1
-            self.downloadData()
+            self.downloadData(url)
         }
         
         
@@ -62,12 +68,13 @@ class MoreBookViewController: BaseViewController {
     }
     
     //下载数据
-    func downloadData(){
-        if url != nil {
-            Alamofire.request(.GET,url!).responseJSON { (response) in
+    func downloadData(url:String){
+        
+            Alamofire.request(.GET,url).responseJSON { (response) in
+                
             self.MoreView!.tbView!.mj_header.endRefreshing()
             self.MoreView!.tbView!.mj_footer.endRefreshing()
-                if self.url!.containsString("220") {
+                if url.containsString("2200") {
                     self.dataArray.removeAll()
                 }
                 if response.result.error == nil {
@@ -95,7 +102,7 @@ class MoreBookViewController: BaseViewController {
                     }
                 }
             }
-        }
+        
     }
 
     override func didReceiveMemoryWarning() {

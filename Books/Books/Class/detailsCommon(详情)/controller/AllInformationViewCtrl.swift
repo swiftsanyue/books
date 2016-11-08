@@ -7,12 +7,23 @@
 //
 
 import UIKit
+import SSZipArchive
+
 
 class AllInformationViewCtrl: BaseViewController {
     
     
     //闭包
     var jumpClosure:SelectedJumpClosure?
+    
+    //下载的对象
+    var session:NSURLSession?
+    
+    //下载任务
+    var downloadTask:NSURLSessionDownloadTask?
+    
+    //存储暂停位置的数据
+    var resumeData:NSData?
     
     //更多数据的视图
     private var informationView:AllInformationView?
@@ -54,8 +65,9 @@ class AllInformationViewCtrl: BaseViewController {
         self.view.addSubview(label)
         let btn=UIButton()
         btn.setTitle("免费下载", forState: .Normal)
-        btn.setTitle("正在下载", forState: .Highlighted)
         btn.setTitle("点击阅读", forState: .Selected)
+        btn.addTarget(self, action: #selector(download(_:)), forControlEvents: .TouchUpInside)
+        btn.tag = 666
         btn.backgroundColor = UIColor(patternImage: UIImage(named: "nav")!)
         btn.layer.cornerRadius = 10
         self.view.addSubview(btn)
@@ -66,21 +78,93 @@ class AllInformationViewCtrl: BaseViewController {
             make.width.equalTo(KScreenW/3+10)
         }
     }
+    
+    func download(btn:UIButton){
+        let str = "\(models!.mingcheng!)-\(models!.zuozhe!)"
+        let Str = str.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLPathAllowedCharacterSet())
+        let downStr = "http://xianyougame.com/shucheng/book/down/\(Str!).zip"
+        
+        let url = NSURL(string: downStr)
+        //在HTTP请求头Header 里面指定接收 Accept-Encoding ： gzip
+        let request = NSURLRequest(URL: url!)
+        
+        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        //        config.HTTPCookieStorage
+        //        config.timeoutIntervalForRequest 设置超时的时间
+        //创建session对象
+        session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+        //创建下载对象
+        downloadTask = session?.downloadTaskWithRequest(request)
+
+        
+        let thread=NSThread(target: self, selector: #selector(blockThread), object: nil)
+        thread.start()
+        
+
+        if btn.tag == 666 {
+            btn.setTitle("正在下载", forState: .Normal)
+        }
+    }
+    func blockThread(){
+        autoreleasepool {
+        //开始下载
+        self.downloadTask?.resume()
+        //测试是否主线程
+        print(NSThread.currentThread())
+        NSThread.exit()
+        }
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
+
+
+extension AllInformationViewCtrl:NSURLSessionDownloadDelegate{
+    //下载完成之后
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL){
+        
+        //拿到沙盒目录下的问价夹
+        let docPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).last
+        print(docPath)
+        
+//        let destPath = docPath?.stringByAppendingString("/\(models!.mingcheng!).zip")
+        
+        //2.移动文件
+//        let fm = NSFileManager.defaultManager()
+//        try! fm.moveItemAtPath(location.path!, toPath: destPath!)
+        
+        
+//        print(NSHomeDirectory())
+//        print(NSThread.currentThread())//查看当前线程
+        //结束下载
+        session.finishTasksAndInvalidate()
+        
+        let tmpView = view.viewWithTag(666)
+        if tmpView?.isKindOfClass(UIButton) == true{
+            let tmpBtn = tmpView as! UIButton
+            tmpBtn.selected = true
+        }
+        let newFile = docPath?.stringByAppendingString("/\(models!.mingcheng!)")
+        //location.path!是原文件的位置
+        //将网络路径下的文件解压
+        SSZipArchive.unzipFileAtPath(location.path!, toDestination: newFile!)    
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

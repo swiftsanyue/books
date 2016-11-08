@@ -51,11 +51,10 @@ class SelectedCell: UITableViewCell {
                 let model = dataArray![i]
                 //创建图片
                 let tmpImageView = UIImageView()
-                //将数据中的中文和"/"转换成url可以识别的数据
-                let str = model.fengmian!.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
-                //%2F是"/"转换后，需要替换回去
-                let str1=str!.stringByReplacingOccurrencesOfString("%2F", withString: "/")
-                let url = NSURL(string: "http://xianyougame.com/shucheng/"+str1)
+                //将数据中的中文和url可以识别的数据
+                let str = model.fengmian!.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())
+                
+                let url = NSURL(string: "http://xianyougame.com/shucheng/"+str!)
                 //请求图片，第二个参数是默认图片，在没有请求下来的时候会显示
                 tmpImageView.kf_setImageWithURL(url!, placeholderImage: nil, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
                 containerView.addSubview(tmpImageView)

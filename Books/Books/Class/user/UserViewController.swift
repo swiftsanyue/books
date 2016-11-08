@@ -57,16 +57,11 @@ class UserViewController: BaseViewController {
             }
             userAccording = true
         }
-        
-
-        
     }
     
     func rightBtnClick(){
         let vc = MainTabBarViewController()
-        
         navigationController?.pushViewController(vc, animated: true)
-        //        self.navigationController?.navigationBarHidden = true
     }
     
     override func didReceiveMemoryWarning() {

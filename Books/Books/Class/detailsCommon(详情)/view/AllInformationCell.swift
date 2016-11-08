@@ -32,10 +32,9 @@ class AllInformationCell: UITableViewCell {
         //创建视图
         let tmpImageView = UIImageView()
         //将数据中的中文和"/"转换成url可以识别的数据
-        let str = model!.fengmian!.stringByAddingPercentEncodingWithAllowedCharacters(.URLHostAllowedCharacterSet())
-        //%2F是"/"转换后，需要替换回去
-        let str1=str!.stringByReplacingOccurrencesOfString("%2F", withString: "/")
-        let url = NSURL(string: "http://xianyougame.com/shucheng/"+str1)
+        let str = model!.fengmian!.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())!
+        
+        let url = NSURL(string: "http://xianyougame.com/shucheng/"+str)
         tmpImageView.kf_setImageWithURL(url!, placeholderImage: nil, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
         contentView.addSubview(tmpImageView)
         
@@ -79,20 +78,7 @@ class AllInformationCell: UITableViewCell {
         }
     }
     
-    //创建cell的方法
-    class func createCellFor(tableView:UITableView,atIndexPath indexPath:NSIndexPath,model:bookModel) -> AllInformationCell{
-        //重用标志
-        let cellId = "cellId"
-        
-        var cell = tableView.dequeueReusableCellWithIdentifier(cellId) as? AllInformationCell
-        if nil == cell {
-            
-            cell = NSBundle.mainBundle().loadNibNamed("cellId", owner: nil, options: nil).last as? AllInformationCell
-        }
-        //显示数据
-        cell?.model = model
-        return cell!
-    }
+    
 
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -8,21 +8,49 @@
 
 import UIKit
 
+public typealias ClassJumpClosure = (AnyObject,Int) -> (Void)
+
 class ClassifyController: BaseViewController {
+    
+    //拿到数据
+    var dataArray:[ClassModel]=[]
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor=UIColor.yellowColor()
         
-        
-        
+        //从class.json里面读取数据
+        let path = NSBundle.mainBundle().pathForResource("class", ofType: "json")
+        let data = NSData(contentsOfFile: path!)
+        do {
+            let dics = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as! [[String:AnyObject]]
+            for dic in dics {
+                let model=ClassModel()
+                model.setValuesForKeysWithDictionary(dic)
+                dataArray.append(model)
+            }
+            
+                    }catch (let error){
+            print(error)
+        }
 
+        let classView = ClassView(frame: CGRectZero)
+        self.view.addSubview(classView)
+        classView.dataArray = dataArray
         
+        //点击事件
+        classView.classJump = {
+            [weak self]
+            (jump,page) in
+            let vc = MoreBookViewController()
+            vc.urlJson = jump as? String
+            self!.navigationController?.pushViewController(vc, animated: true)
+        }
         
-        
-        
-
-        
+        //约束
+        classView.snp_makeConstraints(closure: { (make) in
+            make.edges.equalTo(self.view).inset(UIEdgeInsetsMake(0, 0, 49, 0))
+        })
     }
 
     override func didReceiveMemoryWarning() {
@@ -31,14 +59,6 @@ class ClassifyController: BaseViewController {
     }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+    
 
 }

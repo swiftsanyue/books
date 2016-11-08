@@ -35,6 +35,7 @@ class AllInformationView: UIView {
         tbView?.delegate=self
         tbView?.dataSource = self
         tbView?.showsVerticalScrollIndicator = false
+        tbView?.separatorStyle = .None
         addSubview(tbView!)
         
         //约束
