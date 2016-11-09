@@ -40,7 +40,7 @@ class ClassViewCell: UITableViewCell {
     
     //宽度
     class private var w: CGFloat {
-        return (KScreenW-spaceX*2-spaceX*CGFloat(colCount-1))/CGFloat(colCount)
+        return (KScreenW-spaceX*2)/CGFloat(colCount)
     }
     
     
@@ -105,13 +105,13 @@ class ClassViewCell: UITableViewCell {
             allLabel.snp_makeConstraints(closure: { (make) in
                 make.top.equalToSuperview().offset(20)
                 make.right.equalToSuperview().offset(-20)
-                make.width.equalTo(80)
+                make.width.equalTo(100)
                 make.height.equalTo(20)
             })
             
             for i in 0..<model!.list!.count {
                 
-                let label = UILabel.createLabel(model!.list![i], textAlignment: .Center, font: 17, textColor: cellColor)
+                let label = UILabel.createLabel(model!.list![i], textAlignment: .Center, font: 15, textColor: cellColor)
                 label.userInteractionEnabled = true
                 label.tag = 200+i
                 let g = UITapGestureRecognizer(target: self, action: #selector(tapLabel(_:)))
@@ -127,7 +127,7 @@ class ClassViewCell: UITableViewCell {
                     let col = CGFloat(i%ClassViewCell.colCount)
                     
                     make.top.equalTo(ClassViewCell.spaceY*2+ClassViewCell.h+(ClassViewCell.spaceY+ClassViewCell.h)*row)
-                    make.left.equalTo(ClassViewCell.spaceX+(ClassViewCell.spaceX+ClassViewCell.w)*col)
+                    make.left.equalTo(ClassViewCell.spaceX+(ClassViewCell.w)*col)
                 })
             }
         }

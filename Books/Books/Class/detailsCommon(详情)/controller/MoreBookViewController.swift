@@ -32,8 +32,7 @@ class MoreBookViewController: BaseViewController {
         super.viewDidLoad()
         MoreView = MoreBookView()
         var url:String="http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22\(urlJson!)%22%2C%22page%22%3A%\(pageNuber)%22%7D"
-        //创建导航
-        createNav()
+        
         
         //下载数据
         downloadData(url)
@@ -55,11 +54,11 @@ class MoreBookViewController: BaseViewController {
         
     }
     //创建导航
-    func createNav(){
-        let label=UILabel.createLabel("精选书单", textAlignment: .Center, font: 16, textColor: UIColor.whiteColor())
+    func createNav(title:String?,backTxte:String?){
+        let label=UILabel.createLabel(title, textAlignment: .Center, font: 16, textColor: UIColor.whiteColor())
         label.frame=CGRectMake(0, 0, 100, 40)
         navigationItem.titleView=label
-        addNavBtn("icon_nav_back", text: "精选", action: #selector(backClick), isLeft: true)
+        addNavBtn("icon_nav_back", text: backTxte, action: #selector(backClick), isLeft: true)
     }
     
     func backClick(){

@@ -35,7 +35,7 @@ class AllInformationCell: UITableViewCell {
         let str = model!.fengmian!.stringByAddingPercentEncodingWithAllowedCharacters(.URLPathAllowedCharacterSet())!
         
         let url = NSURL(string: "http://xianyougame.com/shucheng/"+str)
-        tmpImageView.kf_setImageWithURL(url!, placeholderImage: nil, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
+        tmpImageView.kf_setImageWithURL(url!, placeholderImage: UIImage(named: "bookcover_placeholder"), optionsInfo: nil, progressBlock: nil, completionHandler: nil)
         contentView.addSubview(tmpImageView)
         
         tmpImageView.snp_makeConstraints { (make) in

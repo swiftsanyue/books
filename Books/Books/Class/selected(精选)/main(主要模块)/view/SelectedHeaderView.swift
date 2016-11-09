@@ -69,10 +69,6 @@ class SelectedHeaderView: UIView {
             make.left.equalTo(bgView).offset(30)
         })
         
-        //图片
-//        let image = UIImage(named: "more_icon")
-//        imageView = UIImageView(image: image)
-//        bgView.addSubview(imageView!)
         
     }
     func configText(text:String){

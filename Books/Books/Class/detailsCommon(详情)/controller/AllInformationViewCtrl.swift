@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import MobileCoreServices
+import Foundation
 import SSZipArchive
 
 
@@ -29,7 +31,7 @@ class AllInformationViewCtrl: BaseViewController {
     private var informationView:AllInformationView?
     
     var models:bookModel?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,8 +66,16 @@ class AllInformationViewCtrl: BaseViewController {
         label.backgroundColor=UIColor(white: 0.1, alpha: 0.5)
         self.view.addSubview(label)
         let btn=UIButton()
-        btn.setTitle("免费下载", forState: .Normal)
-        btn.setTitle("点击阅读", forState: .Selected)
+        
+        if (DataBase.shareDataBase.selectEntity((models?.mingcheng)!) != nil) {
+            btn.setTitle("点击阅读", forState: .Normal)
+        }else {
+            btn.setTitle("免费下载", forState: .Normal)
+        }
+        
+        
+        
+        
         btn.addTarget(self, action: #selector(download(_:)), forControlEvents: .TouchUpInside)
         btn.tag = 666
         btn.backgroundColor = UIColor(patternImage: UIImage(named: "nav")!)
@@ -80,46 +90,46 @@ class AllInformationViewCtrl: BaseViewController {
     }
     
     func download(btn:UIButton){
-        let str = "\(models!.mingcheng!)-\(models!.zuozhe!)"
-        let Str = str.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLPathAllowedCharacterSet())
-        let downStr = "http://xianyougame.com/shucheng/book/down/\(Str!).zip"
-        
-        let url = NSURL(string: downStr)
-        //在HTTP请求头Header 里面指定接收 Accept-Encoding ： gzip
-        let request = NSURLRequest(URL: url!)
-        
-        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        //        config.HTTPCookieStorage
-        //        config.timeoutIntervalForRequest 设置超时的时间
-        //创建session对象
-        session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
-        //创建下载对象
-        downloadTask = session?.downloadTaskWithRequest(request)
-
-        
-        let thread=NSThread(target: self, selector: #selector(blockThread), object: nil)
-        thread.start()
-        
-
-        if btn.tag == 666 {
+        if btn.titleLabel?.text == "免费下载" {
+            
             btn.setTitle("正在下载", forState: .Normal)
+            btn.userInteractionEnabled = false
+            let str = "\(models!.mingcheng!)-\(models!.zuozhe!)"
+            let Str = str.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLPathAllowedCharacterSet())
+            let downStr = "http://xianyougame.com/shucheng/book/down/\(Str!).zip"
+            
+            let url = NSURL(string: downStr)
+            //在HTTP请求头Header 里面指定接收 Accept-Encoding ： gzip
+            let request = NSURLRequest(URL: url!)
+            
+            let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+            //        config.HTTPCookieStorage
+            //        config.timeoutIntervalForRequest 设置超时的时间
+            //创建session对象
+            session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+            //创建下载对象
+            downloadTask = session?.downloadTaskWithRequest(request)
+            let thread=NSThread(target: self, selector: #selector(blockThread), object: nil)
+            thread.start()
+        }else {
+            print(btn.titleLabel!.text)
         }
     }
     func blockThread(){
         autoreleasepool {
-        //开始下载
-        self.downloadTask?.resume()
-        //测试是否主线程
-        print(NSThread.currentThread())
-        NSThread.exit()
+            //开始下载
+            self.downloadTask?.resume()
+            //测试是否主线程
+            print(NSThread.currentThread())
+            NSThread.exit()
         }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
 }
 
 
@@ -127,31 +137,33 @@ extension AllInformationViewCtrl:NSURLSessionDownloadDelegate{
     //下载完成之后
     func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL){
         
-        //拿到沙盒目录下的问价夹
-        let docPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).last
-        print(docPath)
-        
-//        let destPath = docPath?.stringByAppendingString("/\(models!.mingcheng!).zip")
+        //        let destPath = docPath?.stringByAppendingString("/\(models!.mingcheng!).zip")
         
         //2.移动文件
-//        let fm = NSFileManager.defaultManager()
-//        try! fm.moveItemAtPath(location.path!, toPath: destPath!)
+        //        let fm = NSFileManager.defaultManager()
+        //        try! fm.moveItemAtPath(location.path!, toPath: destPath!)
         
         
-//        print(NSHomeDirectory())
-//        print(NSThread.currentThread())//查看当前线程
+        //        print(NSHomeDirectory())
+        //        print(NSThread.currentThread())//查看当前线程
         //结束下载
         session.finishTasksAndInvalidate()
         
         let tmpView = view.viewWithTag(666)
         if tmpView?.isKindOfClass(UIButton) == true{
             let tmpBtn = tmpView as! UIButton
-            tmpBtn.selected = true
+            tmpBtn.setTitle("点击阅读", forState: .Normal)
+            tmpBtn.userInteractionEnabled = true
         }
         let newFile = docPath?.stringByAppendingString("/\(models!.mingcheng!)")
+        print(newFile!)
         //location.path!是原文件的位置
         //将网络路径下的文件解压
-        SSZipArchive.unzipFileAtPath(location.path!, toDestination: newFile!)    
+        SSZipArchive.unzipFileAtPath(location.path!, toDestination: newFile!)
+        let model = BeautyModel()
+        model.booksName = models!.mingcheng!
+        DataBase.shareDataBase.insertWithModel(model)
+        
     }
 }
 

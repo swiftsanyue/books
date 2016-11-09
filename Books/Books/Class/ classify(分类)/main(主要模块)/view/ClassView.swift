@@ -103,7 +103,7 @@ extension ClassView:UITableViewDelegate,UITableViewDataSource{
             for i in 0..<self!.classUrl.count {
                 if jump as! String == self!.dataArray![i].group! {
                     if page == 0 {
-                    self!.classJump!(self!.classUrl[i],0)
+                    self!.classJump!(self!.classUrl[i],i)
                     }else {
                         self?.classJump!(self!.classUrl[i]+"_\(page)",0)
                     }

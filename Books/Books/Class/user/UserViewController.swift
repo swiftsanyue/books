@@ -8,19 +8,56 @@
 
 import UIKit
 
+public typealias lookBookJumpClosure = (String -> Void)
+
 class UserViewController: BaseViewController {
+    
+    var lookBook : lookBookJumpClosure?
     
     let userSetView=UserSetView()
     
-    let userView=UIView()
+    let userView=UserView()
     
     var userAccording = true
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        //获取数据库里面存了多少数据
+        let mo = DataBase.shareDataBase.selectNum(0)
+        userView.model = mo
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        automaticallyAdjustsScrollViewInsets = false
         
+        automaticallyAdjustsScrollViewInsets = false
+        //创建导航
+        creatrNav()
+        
+//        let fm = NSFileManager.defaultManager()
+//        let array = try! fm.contentsOfDirectoryAtPath(docPath!)
+        
+        
+        view.backgroundColor = UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1.0)
+        
+        self.view.addSubview(userView)
+        
+        userView.lookBook = {
+            bookName in
+//            let vc = LookBookViewController()
+            print(bookName)
+            
+        }
+        
+        userView.snp_makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        self.view.addSubview(userSetView)
+        
+        
+    }
+    func creatrNav(){
         let label=UILabel.createLabel("本地书架", textAlignment: .Center, font: 24, textColor: UIColor.whiteColor())
         label.frame=CGRectMake(0, 0, 100, 40)
         navigationItem.titleView=label
@@ -28,18 +65,6 @@ class UserViewController: BaseViewController {
         navigationController?.navigationBar.setBackgroundImage(img, forBarMetrics: .Default)
         addNavBtn("left", text: nil, action: #selector(leftBtnClick), isLeft: true)
         addNavBtn(nil, text: "书城", action: #selector(rightBtnClick), isLeft: false)
-        view.backgroundColor = UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1.0)
-        
-        self.view.addSubview(userView)
-        userView.backgroundColor = UIColor.whiteColor()
-        userView.snp_makeConstraints { (make) in
-            make.edges.equalToSuperview()
-            
-        }
-        
-        
-        self.view.addSubview(userSetView)
-        
     }
     func leftBtnClick(){
         if userAccording == true {
@@ -66,9 +91,12 @@ class UserViewController: BaseViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        
+    
     }
+}
 
+extension UserViewController {
+    
 }
 
 

@@ -43,7 +43,7 @@ class MoreBookCell: UITableViewCell {
             
             let url = NSURL(string: "http://xianyougame.com/shucheng/"+str!)
             //请求图片，第二个参数是默认图片，在没有请求下来的时候会显示
-            ImageView.kf_setImageWithURL(url!, placeholderImage: nil, optionsInfo: nil, progressBlock: nil, completionHandler: nil)
+            ImageView.kf_setImageWithURL(url!, placeholderImage: UIImage(named: "bookcover_placeholder"), optionsInfo: nil, progressBlock: nil, completionHandler: nil)
             
             
             if model?.mingcheng != nil {

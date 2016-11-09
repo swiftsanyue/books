@@ -44,6 +44,7 @@ class ClassifyController: BaseViewController {
             (jump,page) in
             let vc = MoreBookViewController()
             vc.urlJson = jump as? String
+            vc.createNav(self!.dataArray[page].group!, backTxte: "分类")
             self!.navigationController?.pushViewController(vc, animated: true)
         }
         

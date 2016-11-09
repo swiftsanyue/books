@@ -93,6 +93,8 @@ class SelectedController: BaseViewController {
                         }else if jump as? String == "同人专区" {
                             vc.urlJson = currentUrls[5]
                         }
+                        //修改导航
+                        vc.createNav("精选书单", backTxte: "精选")
                         self.navigationController?.pushViewController(vc, animated: true)
                         }
                         if let model = jump as? bookModel {

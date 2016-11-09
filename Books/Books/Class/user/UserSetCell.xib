@@ -129,13 +129,13 @@
                         </connections>
                     </button>
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="QXn-Op-iEh">
-                        <rect key="frame" x="276" y="6" width="51" height="31"/>
+                        <rect key="frame" x="296" y="6" width="51" height="31"/>
                         <connections>
                             <action selector="lastSwitch:" destination="KGk-i7-Jjw" eventType="valueChanged" id="h27-6b-8t8"/>
                         </connections>
                     </switch>
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="des-rB-5KD">
-                        <rect key="frame" x="276" y="68" width="51" height="31"/>
+                        <rect key="frame" x="296" y="68" width="51" height="31"/>
                         <connections>
                             <action selector="noImageSwitch:" destination="KGk-i7-Jjw" eventType="valueChanged" id="iaU-Wn-ess"/>
                         </connections>
@@ -159,7 +159,7 @@
                     <constraint firstItem="zM2-Fb-RLp" firstAttribute="top" secondItem="BY2-0H-rG8" secondAttribute="bottom" constant="60" id="6Y3-Gs-fBa"/>
                     <constraint firstItem="AkY-q5-yo3" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="7yq-im-VlI"/>
                     <constraint firstAttribute="trailing" secondItem="iQc-is-y7X" secondAttribute="trailing" constant="20" id="8y7-TP-zZb"/>
-                    <constraint firstAttribute="trailing" secondItem="des-rB-5KD" secondAttribute="trailing" constant="50" id="9cJ-hS-bJv"/>
+                    <constraint firstAttribute="trailing" secondItem="des-rB-5KD" secondAttribute="trailing" constant="30" id="9cJ-hS-bJv"/>
                     <constraint firstItem="49l-v8-eR9" firstAttribute="centerY" secondItem="zM2-Fb-RLp" secondAttribute="centerY" id="Asu-DC-GoX"/>
                     <constraint firstItem="BY2-0H-rG8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="HE7-DO-mHA"/>
                     <constraint firstItem="zM2-Fb-RLp" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="LKo-Jz-2pQ"/>
@@ -175,7 +175,7 @@
                     <constraint firstAttribute="trailing" secondItem="AkY-q5-yo3" secondAttribute="trailing" constant="20" id="hh8-6s-WU3"/>
                     <constraint firstItem="uUq-QW-V3P" firstAttribute="top" secondItem="bd6-dG-yU8" secondAttribute="bottom" constant="60" id="jLK-9y-zqP"/>
                     <constraint firstItem="des-rB-5KD" firstAttribute="top" secondItem="AkY-q5-yo3" secondAttribute="bottom" constant="26" id="lrH-fe-7zL"/>
-                    <constraint firstAttribute="trailing" secondItem="QXn-Op-iEh" secondAttribute="trailing" constant="50" id="oIt-Gv-QT4"/>
+                    <constraint firstAttribute="trailing" secondItem="QXn-Op-iEh" secondAttribute="trailing" constant="30" id="oIt-Gv-QT4"/>
                     <constraint firstItem="bd6-dG-yU8" firstAttribute="top" secondItem="AkY-q5-yo3" secondAttribute="bottom" constant="20" id="szg-DQ-fre"/>
                     <constraint firstItem="49l-v8-eR9" firstAttribute="leading" secondItem="zM2-Fb-RLp" secondAttribute="trailing" constant="20" id="tL0-FS-Lyk"/>
                     <constraint firstItem="bd6-dG-yU8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="vCc-kX-NFK"/>

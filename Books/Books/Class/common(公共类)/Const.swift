@@ -8,6 +8,9 @@
 
 import UIKit
 
+//获取沙盒目录的路径
+let docPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).last
+
 //定义一些常量和接口
 //屏幕的宽度和高度
 let KScreenW = UIScreen.mainScreen().bounds.size.width
