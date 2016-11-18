@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import MobileCoreServices
-import Foundation
 import SSZipArchive
 
 
@@ -111,8 +109,10 @@ class AllInformationViewCtrl: BaseViewController {
             downloadTask = session?.downloadTaskWithRequest(request)
             let thread=NSThread(target: self, selector: #selector(blockThread), object: nil)
             thread.start()
-        }else {
-            print(btn.titleLabel!.text)
+        }else if btn.titleLabel?.text == "点击阅读" {
+            let vc = LookBookViewController()
+            vc.bookName = models?.mingcheng
+            navigationController?.pushViewController(vc, animated: false)
         }
     }
     func blockThread(){
@@ -156,7 +156,7 @@ extension AllInformationViewCtrl:NSURLSessionDownloadDelegate{
             tmpBtn.userInteractionEnabled = true
         }
         let newFile = docPath?.stringByAppendingString("/\(models!.mingcheng!)")
-        print(newFile!)
+        
         //location.path!是原文件的位置
         //将网络路径下的文件解压
         SSZipArchive.unzipFileAtPath(location.path!, toDestination: newFile!)

@@ -47,7 +47,7 @@ class MoreBookView: UIView,UpDownTableView {
 }
 
 //MARK:UITableView代理
-extension MoreBookView:UITableViewDelegate,UITableViewDataSource{
+extension MoreBookView{
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var row = 0

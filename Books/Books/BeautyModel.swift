@@ -10,4 +10,11 @@ import UIKit
 
 class BeautyModel: NSObject {
     var booksName : String?
+    var bookMarks : String?
+    var chapter:String?
+    var addTime:String?
 }
+
+
+
+

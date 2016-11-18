@@ -28,9 +28,9 @@ class ClassViewCell: UITableViewCell {
         return 20
     }
     
-    //列数
+    //行数
     class private var colCount:Int{
-        return 4
+        return 5
     }
     
     //字体的高度

@@ -31,6 +31,9 @@ class BooKLookModel: NSObject {
             zhangjie = dataArray
         }
     }
+    override func setValue(value: AnyObject?, forUndefinedKey key: String) {
+        
+    }
 }
 
 class BookChapterModel: NSObject {

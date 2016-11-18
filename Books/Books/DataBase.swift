@@ -60,11 +60,11 @@ class DataBase: NSObject {
         return nil
     }
     //查找指定个数的num
-    func selectNum(num:Int)->[BeautyModel]?{
+    func findNameCount()->[BeautyModel]?{
         let request=NSFetchRequest()
         //设置数据请求的实体结构
         request.entity=NSEntityDescription.entityForName("BeautyEntity", inManagedObjectContext: appDele.managedObjectContext)
-        request.fetchLimit = num //限定查询结果的数量
+        request.fetchLimit = 0 //限定查询结果的数量
         
         //        let num1=NSNumber(integer: 14)
         //        let num2=NSNumber(integer: 20)
@@ -85,8 +85,10 @@ class DataBase: NSObject {
             var array:[BeautyModel]=[]
             for beauty in objects{
                 let model=BeautyModel()
+                if beauty.bookName != nil {
                 model.booksName = beauty.bookName
                 array.append(model)
+                }
             }
             return array
         }catch{
@@ -97,18 +99,16 @@ class DataBase: NSObject {
         return nil
     }
     //更新数据库
-//    func upDateData(Model model:BeautyModel){
-//        let entity=DataBase.shareDataBase.selectEntity(model.idCar!)
-//        if entity != nil{
-//            entity!.name=model.name
-//            entity!.sex=model.sex
-//            entity!.single=model.single
-//            entity!.idCar=model.idCar
+    func upDateData(Model model:BeautyModel){
+        let entity=DataBase.shareDataBase.selectEntity(model.booksName!)
+        if entity != nil{
+//            entity?.bookMarks = model.bookMarks.NS
+            
 
-//            
-//            appDele.saveContext()
-//        }
-//    }
+
+            appDele.saveContext()
+        }
+    }
     //删除数据库
     func deleteWith(bookName:String){
         //拿到entity

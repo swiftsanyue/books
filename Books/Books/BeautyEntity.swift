@@ -11,5 +11,9 @@ import CoreData
 
 class BeautyEntity: NSManagedObject {
     
-
+    @NSManaged var bookName : String?
 }
+
+
+
+

@@ -25,11 +25,23 @@ class UserCollectionViewCell: UICollectionViewCell {
         }
         
         if path != nil {
+            
+            let backView = UIView()
+            backView.layer.cornerRadius = 5
+            backView.layer.borderWidth = 1
+            backView.layer.borderColor = UIColor.grayColor().CGColor
+            contentView.addSubview(backView)
+            backView.snp_makeConstraints(closure: { (make) in
+                make.top.right.left.equalToSuperview()
+                make.bottom.equalTo(-35)
+            })
+            
+            
             imageView=UIImageView()
             imageView?.image = UIImage(contentsOfFile: docPath!+"/"+path!+"/cover.jpg")
             contentView.addSubview(imageView!)
             imageView?.snp_makeConstraints(closure: { (make) in
-                make.top.right.left.equalTo(0)
+                make.top.right.left.equalToSuperview().inset(5)
                 make.bottom.equalTo(-40)
             })
             
@@ -45,9 +57,15 @@ class UserCollectionViewCell: UICollectionViewCell {
     }
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        
-        
+        /*
+        print(NSDate().timeIntervalSince1970)
+        let date = NSDate()
+        let timeFormatter = NSDateFormatter()
+        timeFormatter.dateFormat = "yyy年MM月dd日HH点mm分ss秒SSS毫秒"
+        // yy 的话是16年
+        let strNowTime = timeFormatter.stringFromDate(date) as String
+        print(strNowTime)//2016年11月18日11点21分46秒893毫秒
+        */
     }
     
     required init?(coder aDecoder: NSCoder) {

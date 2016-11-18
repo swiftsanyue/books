@@ -21,7 +21,7 @@ let KScreenH = UIScreen.mainScreen().bounds.size.height
 //lhw_jx_1 : 表示精选 0是精品书单 1是热门书籍 2是最新完结 3是男生爱读 4是女生爱读 5是同人专区
 //jx 是精选，ph排行
 //220/2200是页码
-//
+//http://xianyougame.com/shucheng/phone?json=%7B%22fenlei%22%3A%22lhw_jx_0%22%2C%22page%22%3A%2200%22%7D
 var currentUrls = ["lhw_jx_0","lhw_jx_1","lhw_jx_2","lhw_jx_3","lhw_jx_4","lhw_jx_5"]
 var currentUrl="lhw_jx_0"
 var currentPage = "2200"

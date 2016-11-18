@@ -63,8 +63,8 @@ class AllInformationCell: UITableViewCell {
             make.height.equalTo(20)
             make.right.equalTo(-20)
         }
-        informationLabel=UILabel.createLabel("    "+model!.jianjie!, textAlignment: .Left, font: 15, textColor: UIColor.blackColor())
-        informationLabel.textAlignment = .Natural
+        informationLabel=UILabel.createLabel("        "+model!.jianjie!, textAlignment: .Natural, font: 20, textColor: UIColor.blackColor())
+//        informationLabel.textAlignment = .Natural
         informationLabel.numberOfLines = 0
         contentView.addSubview(informationLabel)
         
@@ -92,7 +92,9 @@ class AllInformationCell: UITableViewCell {
     }
     
     func heightForCell()->(CGFloat){
+        //重新布局cell高度
         self.layoutIfNeeded()
+        
         return  self.viewLabel.frame.size.height+self.informationLabel.frame.size.height+20
     }
 }

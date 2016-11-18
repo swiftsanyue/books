@@ -3,7 +3,14 @@
     <entity name="BeautyEntity" representedClassName=".BeautyEntity" syncable="YES">
         <attribute name="bookName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="BookMarksBeautyEntity" representedClassName=".BookMarksBeautyEntity" syncable="YES">
+        <attribute name="addTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bookMarks" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bookName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="chapter" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+    </entity>
     <elements>
         <element name="BeautyEntity" positionX="-63" positionY="-18" width="128" height="60"/>
+        <element name="BookMarksBeautyEntity" positionX="-63" positionY="-9" width="128" height="105"/>
     </elements>
 </model>

@@ -46,7 +46,6 @@ class MoreBookViewController: BaseViewController {
         }) { [unowned self] in
             
             url = url.stringByReplacingOccurrencesOfString(String(self.pageNuber), withString: String(self.pageNuber+1))
-            print(url)
             self.pageNuber+=1
             self.downloadData(url)
         }
@@ -71,8 +70,7 @@ class MoreBookViewController: BaseViewController {
         
             Alamofire.request(.GET,url).responseJSON { (response) in
                 
-            self.MoreView!.tbView!.mj_header.endRefreshing()
-            self.MoreView!.tbView!.mj_footer.endRefreshing()
+            
                 if url.containsString("2200") {
                     self.dataArray.removeAll()
                 }
@@ -100,6 +98,8 @@ class MoreBookViewController: BaseViewController {
                         }
                     }
                 }
+                self.MoreView!.tbView!.mj_header.endRefreshing()
+                self.MoreView!.tbView!.mj_footer.endRefreshing()
             }
         
     }
