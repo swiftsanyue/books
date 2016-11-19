@@ -2,7 +2,7 @@
 //  BookMarksView.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/18.
+//  Created by ZL on 16/11/18.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -15,12 +15,13 @@ class BookMarksView: UIView {
 
     var bookMarks:[BeautyModel]?{
         didSet{
-            
             tbView?.reloadData()
         }
     }
     //表格
     private var tbView:UITableView?
+    
+    var deleteArray:[NSIndexPath]=[]
     
     //重新实现初始化方法
     override init(frame: CGRect) {
@@ -29,12 +30,17 @@ class BookMarksView: UIView {
         tbView = UITableView(frame: CGRectZero,style: .Plain)
         tbView?.delegate=self
         tbView?.dataSource = self
+        
+        tbView!.setEditing(tbView!.editing, animated: true)
+        
+        
         addSubview(tbView!)
         //约束
         tbView?.snp_makeConstraints(closure: { (make) in
             make.edges.equalToSuperview()
         })
     }
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -44,7 +50,7 @@ class BookMarksView: UIView {
 extension BookMarksView:UITableViewDelegate,UITableViewDataSource {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var row = 0
-        if bookMarks?.count > 1 {
+        if bookMarks?.count > 0 {
             row+=(bookMarks?.count)!
         }
         return row
@@ -66,10 +72,34 @@ extension BookMarksView:UITableViewDelegate,UITableViewDataSource {
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if JumClosure != nil {
-            JumClosure!(indexPath.row)
+            JumClosure!(bookMarks![indexPath.row])
+            
         }
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
     }
-    
+    //删除的样式
+    func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+        
+        return .Delete
+    }
+    //删除的时候的文字
+    func tableView(tableView: UITableView, titleForDeleteConfirmationButtonForRowAtIndexPath indexPath: NSIndexPath) -> String? {
+        return "删除"
+    }
+    /*编辑indexPath位置的cell时候调用的方法
+     参一：让代理调用方法的tableView
+     参二：当前cell编辑的模式
+     参三：被编辑cell的位置
+     */
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == .Delete{
+            
+        BookMarksDataBase.shareDataBase.deleteWith(bookMarks![indexPath.row].bookMarks!)
+            
+        bookMarks?.removeAtIndex(indexPath.row)
+
+            
+        }
+    }
 }

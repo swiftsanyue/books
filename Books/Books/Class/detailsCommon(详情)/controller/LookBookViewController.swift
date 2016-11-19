@@ -2,7 +2,7 @@
 //  LookBookViewController.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/9.
+//  Created by ZL on 16/11/9.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -15,9 +15,9 @@ class LookBookViewController: UIViewController {
     //书籍显示的视图
     private var lookBookView:LookBookView?
     
-    var footSetView:UIView?
+    private var footSetView:UIView?
     
-    var slider:UISlider!
+    private var slider:UISlider!
     
     var model:BooKLookModel?
     
@@ -52,6 +52,46 @@ class LookBookViewController: UIViewController {
         
         navigationController?.setNavigationBarHidden(ctrlHidden, animated: false)
         UIApplication.sharedApplication().statusBarHidden = ctrlHidden
+    }
+    //MARK:页面将要退出的时候
+    override func viewWillDisappear(animated: Bool) {
+        let models = BeautyModel()
+        models.booksName = model?.mingcheng
+        models.chapter = "\((lookBookView?.chapter)!)"
+        
+        let page=Int((lookBookView?.scrollView?.contentOffset.x)!/KScreenW)
+        let tmpLabel=lookBookView?.viewWithTag(500+page)
+        if ((tmpLabel?.isKindOfClass(UILabel)) != nil){
+            let label = tmpLabel as! UILabel
+            let range=lookBookView?.allString?.rangeOfString(label.text!)
+            models.record = "\(range!.location)"
+            
+        }
+        
+        DataBase.shareDataBase.upDateData(Model: models)
+        
+    }
+    
+    //MARK:添加标签的按钮
+    func bookMarks(){
+        if model != nil {
+            let models = BeautyModel()
+            models.booksName = model!.mingcheng!
+            let page=Int((lookBookView?.scrollView?.contentOffset.x)!/KScreenW)
+            let tmpLabel=lookBookView?.viewWithTag(500+page)
+            if ((tmpLabel?.isKindOfClass(UILabel)) != nil){
+                let label = tmpLabel as! UILabel
+                models.bookMarks = label.text
+                let range=lookBookView?.allString?.rangeOfString(label.text!)
+                models.record = "\(range!.location)"
+                
+            }
+            models.chapter = "\((lookBookView?.chapter)!+1)"
+            
+            
+        BookMarksDataBase.shareDataBase.insertWithModel(models)
+            lookBookView?.popupWindow(3)
+        }
     }
     
     override func viewDidLoad() {
@@ -123,23 +163,6 @@ class LookBookViewController: UIViewController {
         navigationController?.navigationBar.setBackgroundImage(UIImage(named: "nav"), forBarMetrics: .Default)
         
     }
-    //MARK:添加标签的按钮
-    func bookMarks(){
-        if model != nil {
-        let models = BeautyModel()
-        models.booksName = model!.mingcheng!
-        let page=Int((lookBookView?.scrollView?.contentOffset.x)!/KScreenW)
-            let tmpLabel=lookBookView?.viewWithTag(500+page)
-            if ((tmpLabel?.isKindOfClass(UILabel)) != nil){
-                let label = tmpLabel as! UILabel
-                models.bookMarks = label.text
-            }
-        models.chapter = "\((lookBookView?.chapter)!+1)"
-
-        BookMarksDataBase.shareDataBase.insertWithModel(models)
-        lookBookView?.popupWindow(3)
-        }
-    }
     func loadData(){
         let path = docPath!+"/\(bookName!)/init.txt"
         let data = NSData(contentsOfFile: path)
@@ -150,10 +173,7 @@ class LookBookViewController: UIViewController {
             model!.setValuesForKeysWithDictionary(dics)
             lookBookView?.model = model
             setView?.model = model!.zhangjie
-            setView?.bookName = model?.mingcheng
-            
-            
-            
+  
         }catch (let error){
             print(error)
         }
@@ -252,6 +272,9 @@ class LookBookViewController: UIViewController {
             lookBookView?.chapter += 1
         }else if g.view?.tag == 400 {
             if !ctrlHidden {
+                setView?.bookName = bookName
+                setView?.chapter = lookBookView?.chapter
+                
                 self.setView?.hidden = false
                 UIView.animateWithDuration(0.5) {
                     self.lookBookView!.frame.origin.x += KScreenW/6*5
@@ -260,7 +283,7 @@ class LookBookViewController: UIViewController {
                 ctrlHidden = !ctrlHidden
             }
         }else if g.view?.tag == 401 {
-            
+            print("修改字体，页面背景，也可以考虑加入屏幕亮度")
         }
     }
     
@@ -294,8 +317,21 @@ class LookBookViewController: UIViewController {
                     self!.setView?.hidden = true
                 }
             }else if (jum as? Int != nil) {
+                //目录点击后调用
                 self!.lookBookView?.jumChapter = true
                 self!.lookBookView?.chapter = jum as! Int
+                UIView.animateWithDuration(0.25, delay: 0.5, options: UIViewAnimationOptions.CurveEaseIn, animations: {
+                    self!.lookBookView!.frame.origin.x -= KScreenW/6*5
+                    self!.setView!.frame.origin.x -= KScreenW
+                }) { (b) in
+                    self!.setView?.hidden = true
+                }
+            }else if jum as? BeautyModel != nil {
+                
+                //书签点击后调用
+                let marks = jum as! BeautyModel
+                self?.lookBookView?.record = Int(marks.record!)
+                self!.lookBookView?.chapter = Int(marks.chapter!)! - 1
                 UIView.animateWithDuration(0.25, delay: 0.5, options: UIViewAnimationOptions.CurveEaseIn, animations: {
                     self!.lookBookView!.frame.origin.x -= KScreenW/6*5
                     self!.setView!.frame.origin.x -= KScreenW

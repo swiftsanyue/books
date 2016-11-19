@@ -2,7 +2,7 @@
 //  LookBookView.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/10.
+//  Created by ZL on 16/11/10.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -27,26 +27,40 @@ class LookBookView: UIView {
     //记录位置的字符串
     private var recordString:NSString?
     
-    //字体的大小
-    var attr = [NSFontAttributeName:UIFont.systemFontOfSize(18)]
+    //书签记录和离开界面的时候记录页面第一个字符的位置
+    var record:Int?
+    
+    //记录当前章节整个字符串
+    var allString:NSString?
     
     //数据数据的存放
     var model:BooKLookModel? {
         didSet{
-            showData()
+            let models = DataBase.shareDataBase.selectEntity((model?.mingcheng)!)
+            if models?.record != nil {
+                record = Int((models?.record)!)
+                chapter = Int((models?.chapter)!)
+                
+            }else {
+                chapter = 0
+            }
         }
     }
     
     //记录更新的页面数
-    var page = 0
+    lazy var page = 0
     
-    var jumChapter:Bool = false
+    lazy var jumChapter:Bool = false
     
     //章节页码
-    var chapter:Int = 0 {
+    var chapter:Int = -2 {
         didSet {
-            
-            if oldValue > chapter && page > 0  && oldValue > 0 {
+            if record != nil {
+                scrollView?.userInteractionEnabled = false
+                page = 0
+                showData()
+ 
+            }else if oldValue > chapter && page > 0  && oldValue > 0 {
                 
                 if jumClosure != nil {
                     jumClosure!(model!.zhangjie![chapter].biaoti!)
@@ -56,8 +70,12 @@ class LookBookView: UIView {
                 showData()
                 if jumChapter == false {
                     scrollView?.contentOffset.x = (CGFloat(page-1))*KScreenW
+                    sliderValueClosure()
+                    
                 }else {
                     scrollView?.contentOffset.x = 0
+                    sliderValueClosure()
+                    
                 }
                 
             }else if oldValue == 0 && oldValue > chapter{
@@ -65,6 +83,8 @@ class LookBookView: UIView {
                 chapter = 0
             }else if oldValue < chapter && page > 0 && chapter != (model?.zhangjie?.count)!{
                 scrollView?.contentOffset.x = 0
+                sliderValueClosure()
+                
                 if jumClosure != nil {
                     jumClosure!(model!.zhangjie![chapter].biaoti!)
                 }
@@ -73,7 +93,7 @@ class LookBookView: UIView {
                 showData()
             }else if chapter == (model?.zhangjie?.count)! {
                 popupWindow(2)
-                chapter-=1
+                chapter = 0
             }
             jumChapter = false
         }
@@ -92,11 +112,11 @@ class LookBookView: UIView {
         let data = NSData(contentsOfFile: path)
         
         //当前章节总的字符串
-        recordString = NSString(data: data!,encoding: NSUTF8StringEncoding)
+        allString = NSString(data: data!,encoding: NSUTF8StringEncoding)
         
         //去除字符串首尾空格和换行
         let whitespace = NSCharacterSet.whitespaceAndNewlineCharacterSet()
-        recordString = recordString!.stringByTrimmingCharactersInSet(whitespace)
+        recordString = allString!.stringByTrimmingCharactersInSet(whitespace)
         
         //1.创建一个容器视图,作为滚动视图的子视图
         containerView = UIView.createView()
@@ -115,6 +135,7 @@ class LookBookView: UIView {
             make.right.equalTo(lastView!)
         })
         scrollView?.userInteractionEnabled = true
+        
     }
     
     override init(frame: CGRect) {
@@ -132,6 +153,12 @@ class LookBookView: UIView {
     }
     //MARK: 分页
     func paging(){
+        
+        let userDefault = NSUserDefaults.standardUserDefaults()
+        let ff=userDefault.objectForKey("fontSize")?.integerValue
+        let fontSize = CGFloat(ff!)
+        
+        let attr = [NSFontAttributeName:UIFont.systemFontOfSize(fontSize)]
         
         var strCoding:String?
         
@@ -185,8 +212,14 @@ class LookBookView: UIView {
         lastView = interfaceView
         let label = UILabel()
         label.numberOfLines = 0
-        label.font = UIFont.systemFontOfSize(18)
+        label.font = UIFont.systemFontOfSize(fontSize)
         label.text = strCoding
+        
+        
+        articlePage(label.text!)
+        
+        
+        
         label.tag = 500+page
         interfaceView.addSubview(label)
         
@@ -221,7 +254,7 @@ class LookBookView: UIView {
         }else if btn.tag == 301 {
             
             if jumClosure != nil {
-//
+                
                 jumClosure!("显示上下界面")
             }
             
@@ -236,6 +269,8 @@ class LookBookView: UIView {
             }
         }
         if containerView?.frame.size.width != 0 {
+            
+            sliderValueClosure()
             let sliderValue = (scrollView!.contentOffset.x) / (containerView!.frame.size.width-KScreenW)
             
             if jumClosure != nil {
@@ -303,6 +338,24 @@ extension LookBookView:UIScrollViewDelegate {
         }else if (scrollView.contentOffset.x) >= (containerView?.frame.size.width)! - KScreenW+10 && (containerView?.frame.size.width)! != 0{
             if scrollView.userInteractionEnabled{
                 startContentOffsetX.x = 1
+            }
+        }
+    }
+    func sliderValueClosure(){
+        let sliderValue = (scrollView!.contentOffset.x) / (CGFloat(page-1)*KScreenW)
+        
+        if jumClosure != nil {
+            jumClosure!(sliderValue*100)
+        }
+    }
+    //MARK:点击书签和退出返回时的位置
+    func articlePage(str:String){
+        if record != nil {
+            let range1 = allString?.rangeOfString(str)
+            
+            if record > range1!.location && record <= range1!.location+range1!.length {
+                scrollView?.contentOffset.x = CGFloat(page+1)*KScreenW
+                record = nil
             }
         }
     }

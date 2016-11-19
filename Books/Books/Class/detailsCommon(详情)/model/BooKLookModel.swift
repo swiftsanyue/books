@@ -2,7 +2,7 @@
 //  BooKLookModel.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/8.
+//  Created by ZL on 16/11/8.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 

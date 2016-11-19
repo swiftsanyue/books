@@ -2,7 +2,7 @@
 //  DirectoryView.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/16.
+//  Created by ZL on 16/11/16.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -12,6 +12,12 @@ class DirectoryView: UIView {
 
     //闭包
     var JumClosure:lookJumClosure?
+    
+    var chapter:Int?{
+        didSet{
+             tbView?.reloadData()
+        }
+    }
     
     //数据
     var model:[BookChapterModel]?{
@@ -61,7 +67,12 @@ extension DirectoryView:UITableViewDelegate,UITableViewDataSource {
             cell=UITableViewCell(style: .Subtitle, reuseIdentifier: "cell")
         }
         cell?.textLabel?.text=model![indexPath.row].biaoti
-        cell?.textLabel?.textColor = UIColor.greenColor()
+        if indexPath.row == chapter {
+            cell?.textLabel?.textColor = UIColor.greenColor()
+        }else {
+            cell?.textLabel?.textColor = UIColor.blackColor()
+        }
+        
         return cell!
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

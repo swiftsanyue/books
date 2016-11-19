@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Books
 //
-//  Created by qianfeng on 16/10/28.
+//  Created by ZL on 16/10/28.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -19,6 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
+        print(docPath!)
+
+        
         let vc = UserViewController()
         //修改导航的背景图片//可以设置的话，就是在所有的地方都这个效果
         (UINavigationBar.appearance()).setBackgroundImage(UIImage(named: "nav"), forBarMetrics: .Default)

@@ -2,7 +2,7 @@
 //  DataBase.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/8.
+//  Created by ZL on 16/11/8.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -94,7 +94,6 @@ class DataBase: NSObject {
         }catch{
             let nserror = error as NSError
             NSLog("查询错误：\(nserror), \(nserror.userInfo)")
-            
         }
         return nil
     }
@@ -102,9 +101,12 @@ class DataBase: NSObject {
     func upDateData(Model model:BeautyModel){
         let entity=DataBase.shareDataBase.selectEntity(model.booksName!)
         if entity != nil{
-//            entity?.bookMarks = model.bookMarks.NS
+            entity?.bookName = model.booksName
             
-
+            entity?.record = NSNumber(integer: (model.record! as NSString).integerValue)
+ 
+            entity?.chapter = NSNumber(integer: (model.chapter! as NSString).integerValue)
+            
 
             appDele.saveContext()
         }

@@ -2,7 +2,7 @@
 //  UserViewController.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/3.
+//  Created by ZL on 16/11/3.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -24,6 +24,16 @@ class UserViewController: BaseViewController {
         //获取数据库里面存了包含bookName的数据
         let mo = DataBase.shareDataBase.findNameCount()
         userView.model = mo
+        //单列，NSUserDefaults用来操作app中的一个plist文件，可以用来存储一些基本数据类型，比如NSNunber、字符串、数组、字典、bool、NSData(二进制)、NSData(时间)，如果数字或者字典的元素不是基本数据类型，那么此数组或者字典不能使用NSUserDefaults存
+        let userDefault = NSUserDefaults.standardUserDefaults()
+        let fontSize=userDefault.objectForKey("fontSize")
+        if fontSize == nil {
+            //字典方法，有就修改，没有就删除
+            userDefault.setObject("20", forKey: "fontSize")
+            //让NSUserDefaults中的数据与plost文件中的数据同步
+            userDefault.synchronize()
+        }
+        
     }
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)//必须调用父类的方法
@@ -36,7 +46,6 @@ class UserViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(docPath!)
 
         automaticallyAdjustsScrollViewInsets = false
         //创建导航
@@ -95,6 +104,7 @@ class UserViewController: BaseViewController {
     func rightBtnClick(){
         let vc = MainTabBarViewController()
         navigationController?.pushViewController(vc, animated: true)
+//        self.view.window?.rootViewController = vc
     }
     
     override func didReceiveMemoryWarning() {

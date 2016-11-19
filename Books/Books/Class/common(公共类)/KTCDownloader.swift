@@ -2,7 +2,7 @@
 //  KTCDownloader.swift
 //  ZLDuanzi
 //
-//  Created by qianfeng on 16/10/28.
+//  Created by ZL on 16/10/28.
 //  Copyright © 2016年 zl. All rights reserved.
 //
 

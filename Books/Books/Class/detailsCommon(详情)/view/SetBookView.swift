@@ -2,7 +2,7 @@
 //  SetBookView.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/15.
+//  Created by ZL on 16/11/15.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -14,6 +14,15 @@ class SetBookView: UIView {
     
     //滚动视图
     private var scrollView:UIScrollView?
+    
+    //当前的章节
+    var chapter:Int?{
+        didSet{
+            if directoryView != nil {
+                directoryView?.chapter = chapter!
+            }
+        }
+    }
     
     //目录的视图
     var directoryView:DirectoryView?
@@ -42,6 +51,7 @@ class SetBookView: UIView {
                     models.bookMarks = mod.bookMarks
                     models.chapter = mod.chapter
                     models.booksName = mod.booksName
+                    models.record = mod.record
                     arr.append(models)
                 }
                 if bookmarksView != nil {
@@ -69,6 +79,7 @@ class SetBookView: UIView {
         }
         
         segCtrl = BookSegCtrl(frame: CGRectMake(0, 0, KScreenW/6*5, 64), titleArray: ["目录","书签"])
+        segCtrl!.delegate = self
         self.addSubview(segCtrl!)
         
         directoryView=DirectoryView()
@@ -93,10 +104,17 @@ class SetBookView: UIView {
         }
         
         
-        
+        //目录的
         directoryView?.JumClosure = {
             [weak self]
             jum in
+            self!.jumClosure!(jum)
+        }
+        //书签的
+        bookmarksView?.JumClosure = {
+            [weak self]
+            jum in
+            
             self!.jumClosure!(jum)
         }
         
@@ -127,9 +145,20 @@ class SetBookView: UIView {
     
 }
 
+//MARK: BookSegCtrl代理
+extension SetBookView:BookSegCtrlDelegate{
+    func segCtrl(segCtrl: BookSegCtrl, didClickBtnAtIndex index: Int) {
+        scrollView?.setContentOffset(CGPointMake(CGFloat(index)*KScreenW/6*5, 0), animated: true)
+    }
+}
+
 
 extension SetBookView:UIScrollViewDelegate{
-    
+    //让滚动视图和标签同步
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        let index = scrollView.contentOffset.x/scrollView.bounds.width
+        segCtrl?.selectIndex = Int(index)
+    }
 }
 
 

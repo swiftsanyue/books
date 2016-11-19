@@ -2,7 +2,7 @@
 //  BookMarksDataBase.swift
 //  Books
 //
-//  Created by qianfeng on 16/11/17.
+//  Created by ZL on 16/11/17.
 //  Copyright © 2016年 ZL. All rights reserved.
 //
 
@@ -15,6 +15,7 @@ class BookMarksDataBase: NSObject {
     
     var appDele = UIApplication.sharedApplication().delegate as! AppDelegate
     
+    //添加数据库数据
     func insertWithModel(model:BeautyModel){
         /*
          根据Entity的名字，创建Entity对象，并且放入到managedObjectContext中
@@ -22,7 +23,15 @@ class BookMarksDataBase: NSObject {
         
         let entity=NSEntityDescription.insertNewObjectForEntityForName("BookMarksBeautyEntity", inManagedObjectContext: appDele.managedObjectContext) as! BookMarksBeautyEntity
         entity.bookName = model.booksName
-        entity.bookMarks = model.bookMarks
+        
+        //去除字符串首尾空格和换行
+        let whitespace = NSCharacterSet.whitespaceAndNewlineCharacterSet()
+        model.bookMarks = model.bookMarks!.stringByTrimmingCharactersInSet(whitespace)
+        if model.bookMarks!.characters.count > 60 {
+            entity.bookMarks = model.bookMarks!.substringToIndex(model.bookMarks!.startIndex.advancedBy(60))
+        }
+        
+        
         entity.chapter = NSNumber(integer: (model.chapter! as NSString).integerValue)
         
         let date = NSDate()
@@ -31,6 +40,8 @@ class BookMarksDataBase: NSObject {
         // yy 的话是16年
         let strNowTime = timeFormatter.stringFromDate(date) as String
         entity.addTime = strNowTime
+        entity.record = NSNumber(integer: (model.record! as NSString).integerValue)
+        
 
         appDele.saveContext()
     }
@@ -40,11 +51,7 @@ class BookMarksDataBase: NSObject {
         //设置数据请求的实体结构,设置数据库中查找的表
         request.entity=NSEntityDescription.entityForName("BookMarksBeautyEntity", inManagedObjectContext: appDele.managedObjectContext)
         request.fetchLimit = 1 //限定查询结果的最大数量
-        /*设置排序,key是以什么排序
-         参1：key 是以什么排序
-         参2: true 是升序， false 是降序
-         */
-        //        request.sortDescriptors=[NSSortDescriptor(key: "age", ascending: true)]
+        
         //设置查询条件
         request.predicate=NSPredicate(format: "bookName==%@", bookName)
         do{
@@ -60,25 +67,43 @@ class BookMarksDataBase: NSObject {
         }
         return nil
     }
+    //判读数据库中是否有此条数据,在这里做为书签的唯一标识
+    func selectEntityMarks(bookMarks:String)->BookMarksBeautyEntity?{
+        let request=NSFetchRequest()
+        //设置数据请求的实体结构,设置数据库中查找的表
+        request.entity=NSEntityDescription.entityForName("BookMarksBeautyEntity", inManagedObjectContext: appDele.managedObjectContext)
+        request.fetchLimit = 1 //限定查询结果的最大数量
+        
+        //设置查询条件
+        request.predicate=NSPredicate(format: "bookMarks==%@", bookMarks)
+        do{
+            //查询操作
+            let objects = try appDele.managedObjectContext.executeFetchRequest(request)
+            if objects.count>0{
+                return objects[0] as? BookMarksBeautyEntity
+            }
+        }catch{
+            let nserror = error as NSError
+            NSLog("Unresolved error \(nserror),\(nserror.userInfo)")
+            abort()
+        }
+        return nil
+    }
     //根据条件获取指定个数的值
-    func findNameCount(str:String)->[BeautyModel]?{
+    func findNameCount(bookName:String)->[BeautyModel]?{
         let request=NSFetchRequest()
         //设置数据请求的实体结构
         request.entity=NSEntityDescription.entityForName("BookMarksBeautyEntity", inManagedObjectContext: appDele.managedObjectContext)
         request.fetchLimit = 0 //限定查询结果的数量 0是全部
         
-        //        let num1=NSNumber(integer: 14)
-        //        let num2=NSNumber(integer: 20)
-        //BETWEEN 在两者之间
-        //        request.predicate=NSPredicate(format: "age BETWEEN {%@,%@}",num1,num2)
         
         
         
         
-        request.predicate=NSPredicate(format: "bookName==%@", str)
         
-        //设置排序
-        //        request.sortDescriptors=[NSSortDescriptor(key: "age", ascending: true)]
+        request.predicate=NSPredicate(format: "bookName==%@", bookName)
+        
+        
         do{
             //查询操作
             let objects=try appDele.managedObjectContext.executeFetchRequest(request) as! [BookMarksBeautyEntity]
@@ -90,6 +115,8 @@ class BookMarksDataBase: NSObject {
                     model.bookMarks = beauty.bookMarks
                     model.chapter = "\(beauty.chapter ?? 0)"
                     model.addTime = beauty.addTime
+                    model.record = "\(beauty.record ?? 0)"
+                    
                     array.append(model)
                 }
             }
@@ -113,9 +140,9 @@ class BookMarksDataBase: NSObject {
         }
     }
     //删除数据库
-    func deleteWith(bookName:String){
+    func deleteWith(bookMarks:String){
         //拿到entity
-        let entity=self.selectEntity(bookName)
+        let entity=self.selectEntityMarks(bookMarks)
         //用managerContext去删除entity
         appDele.managedObjectContext.deleteObject(entity!)
         //让managerContext与数据库同步
