@@ -67,15 +67,16 @@ class BookMarksDataBase: NSObject {
         }
         return nil
     }
-    //判读数据库中是否有此条数据,在这里做为书签的唯一标识
-    func selectEntityMarks(bookMarks:String)->BookMarksBeautyEntity?{
+    
+    //判读数据库中是否有此条数据,在这里做为书签的标识
+    func selectEntityRecord(record:String)->BookMarksBeautyEntity?{
         let request=NSFetchRequest()
         //设置数据请求的实体结构,设置数据库中查找的表
         request.entity=NSEntityDescription.entityForName("BookMarksBeautyEntity", inManagedObjectContext: appDele.managedObjectContext)
         request.fetchLimit = 1 //限定查询结果的最大数量
-        
+        let Record = NSNumber(integer: (record as NSString).integerValue)
         //设置查询条件
-        request.predicate=NSPredicate(format: "bookMarks==%@", bookMarks)
+        request.predicate=NSPredicate(format: "record==%@", Record)
         do{
             //查询操作
             let objects = try appDele.managedObjectContext.executeFetchRequest(request)
@@ -95,15 +96,9 @@ class BookMarksDataBase: NSObject {
         //设置数据请求的实体结构
         request.entity=NSEntityDescription.entityForName("BookMarksBeautyEntity", inManagedObjectContext: appDele.managedObjectContext)
         request.fetchLimit = 0 //限定查询结果的数量 0是全部
-        
-        
-        
-        
-        
-        
+
         request.predicate=NSPredicate(format: "bookName==%@", bookName)
-        
-        
+
         do{
             //查询操作
             let objects=try appDele.managedObjectContext.executeFetchRequest(request) as! [BookMarksBeautyEntity]
@@ -128,24 +123,19 @@ class BookMarksDataBase: NSObject {
         }
         return nil
     }
+    
     //更新数据库
     func upDateData(Model model:BeautyModel){
         let entity=DataBase.shareDataBase.selectEntity(model.booksName!)
         if entity != nil{
-            //            entity?.bookMarks = model.bookMarks.NS
-            
-            
-            
+
             appDele.saveContext()
         }
     }
-    //删除数据库
-    func deleteWith(bookMarks:String){
-        //拿到entity
-        let entity=self.selectEntityMarks(bookMarks)
-        //用managerContext去删除entity
+    
+    func deleteWith(record:String){
+        let entity = self.selectEntityRecord(record)
         appDele.managedObjectContext.deleteObject(entity!)
-        //让managerContext与数据库同步
         appDele.saveContext()
     }
 

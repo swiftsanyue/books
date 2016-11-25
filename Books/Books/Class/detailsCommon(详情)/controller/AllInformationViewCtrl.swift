@@ -107,6 +107,7 @@ class AllInformationViewCtrl: BaseViewController {
             session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
             //创建下载对象
             downloadTask = session?.downloadTaskWithRequest(request)
+            //创建线程
             let thread=NSThread(target: self, selector: #selector(blockThread), object: nil)
             thread.start()
         }else if btn.titleLabel?.text == "点击阅读" {
@@ -115,6 +116,7 @@ class AllInformationViewCtrl: BaseViewController {
             navigationController?.pushViewController(vc, animated: false)
         }
     }
+    //
     func blockThread(){
         autoreleasepool {
             //开始下载

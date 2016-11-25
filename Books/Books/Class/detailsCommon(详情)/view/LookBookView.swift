@@ -12,6 +12,13 @@ class LookBookView: UIView {
     
     var jumClosure:lookJumClosure?
     
+    //书页背景颜色
+    var bgColor: UIColor?{
+        didSet{
+            backgroundColor = bgColor
+        }
+    }
+    
     //滚动视图
     var scrollView:UIScrollView?
     
@@ -57,7 +64,6 @@ class LookBookView: UIView {
         didSet {
             if record != nil {
                 scrollView?.userInteractionEnabled = false
-                page = 0
                 showData()
  
             }else if oldValue > chapter && page > 0  && oldValue > 0 {
@@ -66,7 +72,7 @@ class LookBookView: UIView {
                     jumClosure!(model!.zhangjie![chapter].biaoti!)
                 }
                 scrollView?.userInteractionEnabled = false
-                page = 0
+                
                 showData()
                 if jumChapter == false {
                     scrollView?.contentOffset.x = (CGFloat(page-1))*KScreenW
@@ -78,7 +84,7 @@ class LookBookView: UIView {
                     
                 }
                 
-            }else if oldValue == 0 && oldValue > chapter{
+            }else if oldValue <= 0 && oldValue > chapter {
                 popupWindow(1)
                 chapter = 0
             }else if oldValue < chapter && page > 0 && chapter != (model?.zhangjie?.count)!{
@@ -89,7 +95,7 @@ class LookBookView: UIView {
                     jumClosure!(model!.zhangjie![chapter].biaoti!)
                 }
                 scrollView?.userInteractionEnabled = false
-                page = 0
+                
                 showData()
             }else if chapter == (model?.zhangjie?.count)! {
                 popupWindow(2)
@@ -99,11 +105,12 @@ class LookBookView: UIView {
         }
     }
     
-    private func showData(){
+    func showData(){
         
         for subView in (scrollView?.subviews)! {
             subView.removeFromSuperview()
             lastView = nil
+            page = 0
         }
         
         //拿到文件中的文字
@@ -140,14 +147,16 @@ class LookBookView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+
+         let userDefault = NSUserDefaults.standardUserDefaults()
+         
+         let index = userDefault.objectForKey("lookBookCocol")?.integerValue
         
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor(patternImage: UIImage(named: imageNameAll[index!])!)
         scrollView=UIScrollView(frame: CGRectMake(0,0,KScreenW,KScreenH))
         scrollView?.pagingEnabled = true
         scrollView?.showsHorizontalScrollIndicator = false
         scrollView?.delegate = self
-        //        scrollView?.bounces = false
-        
         addSubview(scrollView!)
         
     }
@@ -218,9 +227,8 @@ class LookBookView: UIView {
         
         articlePage(label.text!)
         
+        label.tag = 1000+page
         
-        
-        label.tag = 500+page
         interfaceView.addSubview(label)
         
         label.snp_makeConstraints(closure: { (make) in
@@ -254,8 +262,12 @@ class LookBookView: UIView {
         }else if btn.tag == 301 {
             
             if jumClosure != nil {
+                let backBtn=UIButton(frame: CGRectMake(0,0,KScreenW,KScreenH-KScreenH/8))
+                backBtn.addTarget(self, action: #selector(back(_:)), forControlEvents: .TouchUpInside)
+                backBtn.tag=777
+                addSubview(backBtn)
+                jumClosure!("上下界面")
                 
-                jumClosure!("显示上下界面")
             }
             
         }else if btn.tag == 302 {
@@ -279,6 +291,22 @@ class LookBookView: UIView {
             
         }
     }
+    func back(justDelete:Bool){
+        if jumClosure != nil {
+            if justDelete {
+                if let tmpBtn = self.viewWithTag(777) {
+                    let btn = tmpBtn as! UIButton
+                    btn.removeFromSuperview()
+                }
+            }else {
+                jumClosure!("上下界面")
+                if let tmpBtn = self.viewWithTag(777) {
+                    let btn = tmpBtn as! UIButton
+                    btn.removeFromSuperview()
+                }
+            }
+        }
+    }
     //MARK: 弹窗
     func popupWindow(id:Int){
         var label:UILabel?
@@ -290,6 +318,8 @@ class LookBookView: UIView {
             label?.text = "已经是最后章节"
         }else if id == 3 {
             label?.text = "添加书签成功"
+        }else if id == 4 {
+            label?.text = "删除书签成功"
         }
         label?.center = center
         label?.textAlignment = .Center
@@ -352,9 +382,11 @@ extension LookBookView:UIScrollViewDelegate {
     func articlePage(str:String){
         if record != nil {
             let range1 = allString?.rangeOfString(str)
-            
             if record > range1!.location && record <= range1!.location+range1!.length {
                 scrollView?.contentOffset.x = CGFloat(page+1)*KScreenW
+                record = nil
+            }else if record == 0 {
+                scrollView?.contentOffset.x = 0
                 record = nil
             }
         }

@@ -26,15 +26,15 @@ class BookSegCtrl: UIView {
             if selectIndex != oldValue{
                 //取消之前的选中状态
                 let lastBtn = viewWithTag(600+oldValue)
-                if lastBtn?.isKindOfClass(KTCSegBtn) == true {
-                    let tmpBrn = lastBtn as! KTCSegBtn
+                if lastBtn?.isKindOfClass(CJSegBtn) == true {
+                    let tmpBrn = lastBtn as! CJSegBtn
                     tmpBrn.clicked = false
                 }
 
                 //选中当前点击的按钮
                 let curBtn = viewWithTag(600+selectIndex)
-                if lastBtn?.isKindOfClass(KTCSegBtn) == true {
-                    let tmpBrn = curBtn as! KTCSegBtn
+                if lastBtn?.isKindOfClass(CJSegBtn) == true {
+                    let tmpBrn = curBtn as! CJSegBtn
                     tmpBrn.clicked = true
                 }
             }
@@ -62,13 +62,10 @@ class BookSegCtrl: UIView {
         let w = (bounds.size.width-40)/CGFloat(titleArray.count)
         
         for i in 0..<titleArray.count {
-            let label=UILabel(frame: CGRectMake(20+CGFloat(i)*w,15,w,34))
-            label.text = titleArray[i]
-            label.layer.borderWidth = 1
-            label.layer.borderColor = UIColor.greenColor().CGColor
+            
             //循环创建按钮
             let frame = CGRectMake(20+CGFloat(i)*w,15,w,34)
-            let btn = KTCSegBtn(frame: frame)
+            let btn = CJSegBtn(frame: frame)
             
 
             //默认选中第一个
@@ -87,7 +84,7 @@ class BookSegCtrl: UIView {
             addSubview(btn) 
         }
     }
-    func clickBtn(btn:KTCSegBtn){
+    func clickBtn(btn:CJSegBtn){
         let index = btn.tag-600
         //修改选中的UI
         selectIndex = index
@@ -98,7 +95,7 @@ class BookSegCtrl: UIView {
 
 
 //自定制按钮
-class KTCSegBtn:UIControl {
+class CJSegBtn:UIControl {
     
     private var titleLabel: UILabel?
     

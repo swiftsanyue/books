@@ -18,7 +18,7 @@ class MainTabBarViewController: UITabBarController {
         label.frame = CGRectMake(0, 0, 100, 40)
         navigationItem.titleView=label
         addNavBtn("icon_nav_back", text: nil, action: #selector(leftBtnCk), isLeft: true)
-        addNavBtn("icon_search_white", text: nil, action: #selector(rightBtnCk), isLeft: false)
+//        addNavBtn("icon_search_white", text: nil, action: #selector(rightBtnCk), isLeft: false)
 
         
         
@@ -40,7 +40,7 @@ class MainTabBarViewController: UITabBarController {
         
         //视图控制器对象的数组
         var ctrlArray:[UIViewController] = []
-        for i in 0..<nameArray.count {
+        for i in 0..<nameArray.count-2 {
             //使用类名创建类的对象
             let ctrl = NSClassFromString("Books."+nameArray[i]) as! BaseViewController.Type
             let vc = ctrl.init()

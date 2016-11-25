@@ -19,7 +19,7 @@ class BookMarksView: UIView {
         }
     }
     //表格
-    private var tbView:UITableView?
+    var tbView:UITableView?
     
     var deleteArray:[NSIndexPath]=[]
     
@@ -95,8 +95,8 @@ extension BookMarksView:UITableViewDelegate,UITableViewDataSource {
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete{
             
-        BookMarksDataBase.shareDataBase.deleteWith(bookMarks![indexPath.row].bookMarks!)
-            
+        BookMarksDataBase.shareDataBase.deleteWith(bookMarks![indexPath.row].record!)
+    
         bookMarks?.removeAtIndex(indexPath.row)
 
             

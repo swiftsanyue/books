@@ -16,7 +16,8 @@ import UIKit
 
 class ClassView: UIView {
     
-    let color=[UIColor.purpleColor(),UIColor.blueColor(),UIColor.orangeColor(),UIColor.cyanColor()]
+    let color=[UIColor.purpleColor(),UIColor.blueColor(),UIColor.orangeColor(),UIColor.cyanColor(),UIColor.greenColor(),UIColor.redColor(),UIColor.magentaColor(),UIColor.brownColor()]
+
     
     var classUrl = ["lhw_yq","lhw_wx","lhw_xh","lhw_ds","lhw_wy","lhw_kbly","lhw_jdmz","lhw_zttl"]
     

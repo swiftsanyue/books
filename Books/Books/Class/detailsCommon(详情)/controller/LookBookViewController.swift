@@ -12,40 +12,53 @@ public typealias lookJumClosure = (AnyObject -> Void)
 
 class LookBookViewController: UIViewController {
     
+    var bookName:String?
+    
+    //设置文字大小和书面背景的视图
+    var setLookBook:SetLookBook?
+    
     //书籍显示的视图
     private var lookBookView:LookBookView?
     
+    //底部视图
     private var footSetView:UIView?
     
+    //底部视图上面的滚动条
     private var slider:UISlider!
     
+    //书签按钮
+    private var btn:UIButton?
+    
+    //
     var model:BooKLookModel?
     
     //书籍设置的视图
-    private var setBookView:UIView!
-    
+    private var setBookView:SetLookBook?
+
     //左边的书籍目录书签视图
     var setView:SetBookView?
     
-    var progressLabel:UILabel!
+    //步进器上面的标签
+    private var progressLabel:UILabel!
     
     var ctrlHidden:Bool = true {
         didSet{
-            navigationController?.setNavigationBarHidden(ctrlHidden, animated: true)
+        navigationController?.setNavigationBarHidden(ctrlHidden, animated: true)
             UIApplication.sharedApplication().statusBarHidden = ctrlHidden
             if UIApplication.sharedApplication().statusBarHidden {
                 UIView.animateWithDuration(0.25){
                     self.footSetView?.frame.origin.y = KScreenH
+                    self.lookBookView?.back(true)
+                    
                 }
             }else {
                 UIView.animateWithDuration(0.25){
                     self.footSetView?.frame.origin.y = KScreenH/8*7
+                    
                 }
             }
         }
     }
-    
-    var bookName:String?
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -60,7 +73,7 @@ class LookBookViewController: UIViewController {
         models.chapter = "\((lookBookView?.chapter)!)"
         
         let page=Int((lookBookView?.scrollView?.contentOffset.x)!/KScreenW)
-        let tmpLabel=lookBookView?.viewWithTag(500+page)
+        let tmpLabel=lookBookView?.viewWithTag(1000+page)
         if ((tmpLabel?.isKindOfClass(UILabel)) != nil){
             let label = tmpLabel as! UILabel
             let range=lookBookView?.allString?.rangeOfString(label.text!)
@@ -73,25 +86,75 @@ class LookBookViewController: UIViewController {
     }
     
     //MARK:添加标签的按钮
-    func bookMarks(){
-        if model != nil {
-            let models = BeautyModel()
-            models.booksName = model!.mingcheng!
-            let page=Int((lookBookView?.scrollView?.contentOffset.x)!/KScreenW)
-            let tmpLabel=lookBookView?.viewWithTag(500+page)
-            if ((tmpLabel?.isKindOfClass(UILabel)) != nil){
-                let label = tmpLabel as! UILabel
-                models.bookMarks = label.text
-                let range=lookBookView?.allString?.rangeOfString(label.text!)
-                models.record = "\(range!.location)"
-                
+    func bookMarks(btn:UIButton){
+        
+        if btn.selected == false {
+            btn.selected = true
+            if model != nil {
+                let models = BeautyModel()
+                models.booksName = model!.mingcheng!
+                let page=Int((lookBookView?.scrollView?.contentOffset.x)!/KScreenW)
+                let tmpLabel=lookBookView?.viewWithTag(1000+page)
+                if ((tmpLabel?.isKindOfClass(UILabel)) != nil){
+                    let label = tmpLabel as! UILabel
+                    models.bookMarks = label.text
+                    let range=lookBookView?.allString?.rangeOfString(label.text!)
+                    models.record = "\(range!.location)"
+                }
+                models.chapter = "\((lookBookView?.chapter)!+1)"
+                BookMarksDataBase.shareDataBase.insertWithModel(models)
+                lookBookView?.popupWindow(3)
             }
-            models.chapter = "\((lookBookView?.chapter)!+1)"
-            
-            
-        BookMarksDataBase.shareDataBase.insertWithModel(models)
-            lookBookView?.popupWindow(3)
+        }else {
+            btn.selected = false
+            if model != nil {
+                let page=Int((lookBookView?.scrollView?.contentOffset.x)!/KScreenW)
+                let tmpLabel=lookBookView?.viewWithTag(1000+page)
+                let label = tmpLabel as! UILabel
+                let range=lookBookView?.allString?.rangeOfString(label.text!)
+                let array = BookMarksDataBase.shareDataBase.findNameCount(bookName!)
+                for arr in array! {
+                    let num = Int(NSNumber(integer: (arr.record! as NSString).integerValue))
+                    if num >= (range?.location)! && num <= (range?.location)!+(range?.length)! {
+                        BookMarksDataBase.shareDataBase.deleteWith(arr.record!)
+                    }
+                }
+                lookBookView?.popupWindow(4)
+            }
         }
+    }
+    //判断当前视图是否已经在书签里面有了
+    func judgeBtn(){
+        
+        let page=Int((lookBookView?.scrollView?.contentOffset.x)!/KScreenW)
+        
+        let tmpLabel=lookBookView?.viewWithTag(1000+page)
+        
+            let label = tmpLabel as! UILabel
+            let range=lookBookView?.allString?.rangeOfString(label.text!)
+            let array = BookMarksDataBase.shareDataBase.findNameCount(bookName!)
+        if array?.count > 0 {
+            for arr in array! {
+                let num = Int(NSNumber(integer: (arr.record! as NSString).integerValue))
+                
+                if num >= (range?.location)! && num <= (range?.location)!+(range?.length)! {
+                    btn!.selected = true
+                }else {
+                    btn!.selected = false
+                }
+            }
+        }else {
+            btn?.selected = false
+        }
+    }
+    //创建导航书签的按钮
+    func navRightBtn(){
+        btn=UIButton.createBtn(nil, bgImageName: "ReadingBookmarkUnAddButtonNormal", highlightImageName: nil, selectImageName: "ReadingBookmarkAddButtonNormal", target: self, action: #selector(bookMarks(_:)))
+        btn!.frame = CGRect(x: 0, y: 0, width: 44, height:44)
+        judgeBtn()
+        
+        let barBtn=UIBarButtonItem(customView: btn!)
+        navigationItem.rightBarButtonItem = barBtn
     }
     
     override func viewDidLoad() {
@@ -99,8 +162,9 @@ class LookBookViewController: UIViewController {
         automaticallyAdjustsScrollViewInsets = false
         self.view.backgroundColor = UIColor.whiteColor()
         addNavBtn("WKBackButtonNormalForMyFav_Ios7_12x22_", action: #selector(backClick), isLeft: true)
-        addNavBtn("ReadingBookmarkAddButtonHighlighted", text: nil, action: #selector(bookMarks), isLeft: false)
+        
         navigationController?.navigationBar.setBackgroundImage(nil, forBarMetrics: .Default)
+        
 
         //创建视图
         createView()
@@ -110,11 +174,14 @@ class LookBookViewController: UIViewController {
         loadData()
         //底部设置视图
         setLookBookView()
+        //设置文字大小和书面背景的视图
+        createSetLookBookView()
         
+        //滚动球的显示label
         createProgressLable()
         //系统自带隐藏导航功能，直接在视图上下滑动，或者点击导航
         //        navigationController?.hidesBarsOnSwipe = true
-        
+        navRightBtn()
         
     }
     //MARK:创建了阅读界面，处理返回值
@@ -126,9 +193,11 @@ class LookBookViewController: UIViewController {
             [weak self]
             jum in
             
-            if (jum as? String == "显示上下界面") {
+            if (jum as? String == "上下界面") {
                 self!.ctrlHidden = !self!.ctrlHidden
                 self!.navigationItem.title = self!.lookBookView?.model?.zhangjie![(self!.lookBookView?.chapter)!].biaoti
+                self!.judgeBtn()
+               
             }else if (jum as? String != nil) {
                 self!.navigationItem.title = jum as? String
             }
@@ -272,18 +341,28 @@ class LookBookViewController: UIViewController {
             lookBookView?.chapter += 1
         }else if g.view?.tag == 400 {
             if !ctrlHidden {
+                
                 setView?.bookName = bookName
                 setView?.chapter = lookBookView?.chapter
+                setView?.directoryView?.hidden = false
+                setView?.segCtrl?.selectIndex = 0
+                setView?.hidden = false
                 
-                self.setView?.hidden = false
                 UIView.animateWithDuration(0.5) {
                     self.lookBookView!.frame.origin.x += KScreenW/6*5
                     self.setView!.frame.origin.x += KScreenW
+                    
                 }
                 ctrlHidden = !ctrlHidden
             }
         }else if g.view?.tag == 401 {
-            print("修改字体，页面背景，也可以考虑加入屏幕亮度")
+            
+           
+            UIView.animateWithDuration(0.5) {
+                self.ctrlHidden = !self.ctrlHidden
+                self.setLookBook?.frame.origin.y -= 120
+            }
+            exitBtn()
         }
     }
     
@@ -309,41 +388,76 @@ class LookBookViewController: UIViewController {
         setView?.jumClosure = {
             [weak self]
             jum in
+            
+            
+            UIView.animateWithDuration(0.25, delay: 0.5, options: UIViewAnimationOptions.CurveEaseIn, animations: {
+                self!.lookBookView!.frame.origin.x -= KScreenW/6*5
+                self!.setView!.frame.origin.x -= KScreenW
+                
+            }) { (b) in
+                self?.setView?.bookmarksView?.removeFromSuperview()
+                self!.setView?.hidden=true
+                
+            }
+            //点击右边蒙层
             if (jum as? String == "继续看书") {
-                UIView.animateWithDuration(0.25, delay: 0.5, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-                    self!.lookBookView!.frame.origin.x -= KScreenW/6*5
-                    self!.setView!.frame.origin.x -= KScreenW
-                }) { (b) in
-                    self!.setView?.hidden = true
-                }
+                
             }else if (jum as? Int != nil) {
-                //目录点击后调用
+                //目录Cell点击后调用
                 self!.lookBookView?.jumChapter = true
                 self!.lookBookView?.chapter = jum as! Int
-                UIView.animateWithDuration(0.25, delay: 0.5, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-                    self!.lookBookView!.frame.origin.x -= KScreenW/6*5
-                    self!.setView!.frame.origin.x -= KScreenW
-                }) { (b) in
-                    self!.setView?.hidden = true
-                }
+                
             }else if jum as? BeautyModel != nil {
                 
-                //书签点击后调用
+                //书签Cell点击后调用
                 let marks = jum as! BeautyModel
                 self?.lookBookView?.record = Int(marks.record!)
                 self!.lookBookView?.chapter = Int(marks.chapter!)! - 1
-                UIView.animateWithDuration(0.25, delay: 0.5, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-                    self!.lookBookView!.frame.origin.x -= KScreenW/6*5
-                    self!.setView!.frame.origin.x -= KScreenW
-                }) { (b) in
-                    self!.setView?.hidden = true
-                }
             }
         }
     }
+    //MARK:设置文字大小和书面背景的视图
+    func createSetLookBookView(){
+        
+        setLookBook=SetLookBook(frame: CGRectMake(0,KScreenH,KScreenW,120), imageNames: imageNameAll)
+        
+        setLookBook?.delegata = self
+        self.view.addSubview(setLookBook!)
+        setLookBook?.jum = {
+            jum in
+            if jum as! Int != 0 {
+                self.lookBookView?.showData()
+            }
+        }
+        
+    }
 }
 
+extension LookBookViewController:SetLookBookDelegate {
+    func bgCtrl(setLookBook: SetLookBook, didClickBtnAtIndex index: Int) {
 
+            setLookBook.selectIndex = index
+            lookBookView?.bgColor = UIColor(patternImage: UIImage(named: imageNameAll[index])!)
+        let userDefault = NSUserDefaults.standardUserDefaults()
+            userDefault.setObject(index, forKey: "lookBookCocol")
+            userDefault.synchronize()
+
+
+        
+    }
+    func exitBtn(){
+        let btn=UIButton(frame: CGRectMake(0,0,KScreenW,KScreenH-120))
+        btn.addTarget(self, action: #selector(exit(_:)), forControlEvents: .TouchUpInside)
+        
+        self.view.addSubview(btn)
+    }
+    func exit(btn:UIButton) {
+        UIView.animateWithDuration(0.25) {
+            self.setLookBook?.frame.origin.y += 120
+        }
+        btn.removeFromSuperview()
+    }
+}
 
 
 

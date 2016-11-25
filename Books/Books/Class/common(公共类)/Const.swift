@@ -16,7 +16,8 @@ let docPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomai
 let KScreenW = UIScreen.mainScreen().bounds.size.width
 let KScreenH = UIScreen.mainScreen().bounds.size.height
 
-
+//阅读背景颜色
+let imageNameAll=["theme_other_bg","bkground_blue","bkground_brown","bkground_green","bkground_huyan2","bkground_huyan1"]
 
 //lhw_jx_1 : 表示精选 0是精品书单 1是热门书籍 2是最新完结 3是男生爱读 4是女生爱读 5是同人专区
 //jx 是精选，ph排行
